@@ -153,13 +153,14 @@ class Settings: NSObject {
     }
     
     /**Build alarm times as url param*/
-    public func alarmTimes()->String{
+    public func alarmTags()->String{
         
         var dic = [Int : String]()
         if(surveys.count > 0){
             for i in 0 ..< surveys.count{
                 let sur = surveys[i]
-                dic[i + 1] = DateUtil.stringifyTime(calendar: sur.getDate());
+//                dic[i + 1] = DateUtil.stringifyTime(calendar: sur.getDate()) + "FFF";
+                dic[i + 1] = String(sur.getRequestCode()) + "FFF";
             }
         }
         return dic.description
@@ -205,7 +206,7 @@ class Settings: NSObject {
     private static func buildSurveysDev(  start : Date,   end : Date) ->[Survey]{
     
 //        let minute = 60
-        let minutesDiff = 60;
+        let minutesDiff = 380;
         var beepMinDiff = [Int]()
         for  i in stride(from: 1 - Constants.TIME_BETWEEN_SURVEYS_DEV, to: minutesDiff, by: Constants.TIME_BETWEEN_SURVEYS_DEV) {
             beepMinDiff.append(i);

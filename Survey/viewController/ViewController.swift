@@ -187,7 +187,7 @@ class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificatio
     }
     func showWebView(url: String) {
         
-        print(url)
+        print("show webview ",url)
         let urlrequest = URL(string: url)
         if(isInternetAvailable()){
             var request = URLRequest(url: urlrequest!)
