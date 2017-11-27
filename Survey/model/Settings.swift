@@ -119,7 +119,8 @@ class Settings: NSObject {
                 let timeDiffInMin = Int(Date().timeIntervalSince(sur.getDate())) / (60);
                 if(timeDiffInMin < Constants.TIME_TO_TAKE_SURVEY + 1){
                     print("founded in should show survey", sur.getDate(), "time diff ", timeDiffInMin, sur.isTaken(), sur.isClosed())
-                    return !sur.isTaken() && !sur.isClosed()
+//                    return !sur.isTaken() && !sur.isClosed()
+                    return !sur.isClosed()
                 }
                 
             } else {
@@ -312,6 +313,9 @@ class Settings: NSObject {
         return [Survey]()
     }
     public func saveSettingToDefault(){
+        if(self.rtid == "") {
+            return
+        }
         let defaults = UserDefaults.standard
         defaults.set(self.loggedIn, forKey: Constants.loggedInKey)
         defaults.set(self.rtid , forKey: Constants.rtidKey)
@@ -339,9 +343,9 @@ class Settings: NSObject {
             let res = Settings();
             res.rtid = defaults.string(forKey: Constants.rtidKey)!
             res.loggedIn = defaults.bool(forKey: Constants.loggedInKey)
-            res.beginTime = DateUtil.dateAll(calendar: defaults.string(forKey: Constants.beginTimeKey)!)
-            res.endTime = DateUtil.dateAll(calendar: defaults.string(forKey: Constants.endTimeKey)!)
-            res.setAtTime = DateUtil.dateAll(calendar: defaults.string(forKey: Constants.setAtTimeKey)!)
+            res.beginTime = DateUtil.dateAll(calendar: defaults.string(forKey: Constants.beginTimeKey)!)!
+            res.endTime = DateUtil.dateAll(calendar: defaults.string(forKey: Constants.endTimeKey)!)!
+            res.setAtTime = DateUtil.dateAll(calendar: defaults.string(forKey: Constants.setAtTimeKey)!)!
             
             let surveysString = defaults.string(forKey: Constants.surveysKey)
             let surveyArray = surveysString?.split(separator: "\n")
