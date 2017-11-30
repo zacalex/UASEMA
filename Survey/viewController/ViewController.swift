@@ -125,6 +125,9 @@ class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificatio
             if(!isInSurvey){
                 let survey = settings.getSurveyByTime(now: now);
                 survey?.setAlarmed()
+                if(isInternetAvailable()) {
+                    survey?.setAsTaken()
+                }
                 if(survey != nil) {
                     Notification.removeNotificationForASurvey(SurveyDate: (survey?.getDate())!)
                 }
@@ -196,10 +199,7 @@ class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificatio
             request.setValue(getCookie(), forHTTPHeaderField: "Cookie")
             //            request.httpShouldHandleCookies = false
             myWebView.load(request)
-            if(settings.getRtid() != ""){
-                let survey = settings.getSurveyByTime(now: Date())
-                survey?.setAsTaken()
-            }
+            
             
             
         } else{
