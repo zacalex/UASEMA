@@ -160,7 +160,20 @@ class Settings: NSObject {
             for i in 0 ..< surveys.count{
                 let sur = surveys[i]
 //                dic[i + 1] = DateUtil.stringifyTime(calendar: sur.getDate()) + "FFF";
-                dic[i + 1] = String(sur.getRequestCode()) + "FFF";
+                var alarmed = "F"
+                if(sur.getAlarmed()) {
+                    alarmed =  "T"
+                }
+                var taken = "F"
+                if(sur.isTaken()) {
+                    taken = "T"
+                }
+                var closed = "F"
+                if(sur.isClosed()){
+                    closed = "T"
+                }
+                
+                dic[i + 1] = String(sur.getRequestCode()) + alarmed + taken + closed
             }
         }
         return dic.description
