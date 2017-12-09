@@ -44,8 +44,8 @@ class Constants: NSObject {
     private static let TIME_TO_TAKE_SURVEY_DEV = 2;
     private static let TIME_TO_REMINDER_DEV = 1;
     
-    public static let TIME_TO_TAKE_SURVEY = isDemo ? TIME_TO_TAKE_SURVEY_DEV : TIME_TO_TAKE_SURVEY_PRO;
-    public static let TIME_TO_REMINDER = isDemo ? TIME_TO_REMINDER_DEV : TIME_TO_REMINDER_PRO;
-    public static let baseURL = "https://uas.usc.edu/survey/uas/ema/daily/index.php";
+    public static var TIME_TO_TAKE_SURVEY = isDemo ? TIME_TO_TAKE_SURVEY_DEV : TIME_TO_TAKE_SURVEY_PRO;
+    public static var TIME_TO_REMINDER = isDemo ? TIME_TO_REMINDER_DEV : TIME_TO_REMINDER_PRO;
+    public static var baseURL = "https://uas.usc.edu/survey/uas/ema/daily/index.php";
    
 }

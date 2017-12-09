@@ -54,7 +54,7 @@ class Notification: NSObject {
             let content = UNMutableNotificationContent()
             let content2 = UNMutableNotificationContent()
             let first = sur.getDate()
-            let second = Calendar.current.date(byAdding: .minute, value: 1, to: first)
+            let second = Calendar.current.date(byAdding: .minute, value: Constants.TIME_TO_REMINDER, to: first)
             
             content.title = "Survey is Ready"
             content.body = "Notification generated at " + DateUtil.stringifyTime(calendar: first)
