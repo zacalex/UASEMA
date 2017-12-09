@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class Settings: NSObject {
     private static var mInstance : Settings!;
@@ -44,6 +45,16 @@ class Settings: NSObject {
         self.setAtTime = setAtTime;
         
     }
+    public func  updateAndSave(  rtid : String,   beginTime : Date,   endTime : Date,   setAtTime : Date , surs : [Survey]){
+        self.loggedIn = true;
+        self.rtid = (rtid == "") ? self.rtid : rtid;   //  rtid == "" when changing settings after logging out;
+        self.beginTime = beginTime;
+        self.endTime = endTime;
+        self.surveys = surs
+        self.setAtTime = setAtTime;
+        
+    }
+    
     public func  updateUserIdAndSave(  rtid : String){
         loggedIn = true;
         self.rtid = rtid;
@@ -216,6 +227,20 @@ class Settings: NSObject {
 //    }
     
     /** Set alarms from dates */
+    public static func buildSurveyFromJSON(json : JSON)->[Survey]{
+        var alarmTimes = [Survey]();
+        var count = 1;
+        if json["pings"].count > 0 {
+            print(json["pings"])
+            for time in json["pings"] {
+                print(time)
+                let cur = DateUtil.dateAll(calendar: String(describing: time.1))
+                alarmTimes.append(Survey(requestCode: count * 3, date: cur!))
+                count += 1
+            }
+        }
+        return alarmTimes
+    }
     private static func buildSurveysDev(  start : Date,   end : Date) ->[Survey]{
     
 //        let minute = 60

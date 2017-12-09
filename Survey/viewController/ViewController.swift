@@ -30,6 +30,8 @@ class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificatio
         super.viewDidLoad()
         UNUserNotificationCenter.current().delegate = self
         
+        //json test
+        JsonParser.updateSettingSample()
         
         // init wkwebview
         setWKWebview()
