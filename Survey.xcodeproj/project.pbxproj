@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		0900C9E4F006748AD4B98047 /* Pods_Survey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D31E2412DD3EA82F3A02754 /* Pods_Survey.framework */; };
 		2E3645F81FA13D2100A8FC5B /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E3645F71FA13D2100A8FC5B /* NotificationManager.swift */; };
+		2E895E372001DC9E008C52C5 /* Upload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E895E362001DC9E008C52C5 /* Upload.swift */; };
 		2EA558411F8B722200D2E9EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EA558401F8B722200D2E9EE /* AppDelegate.swift */; };
 		2EA558461F8B722200D2E9EE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2EA558441F8B722200D2E9EE /* Main.storyboard */; };
 		2EA558491F8B722200D2E9EE /* Survey.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2EA558471F8B722200D2E9EE /* Survey.xcdatamodeld */; };
@@ -34,6 +35,7 @@
 
 /* Begin PBXFileReference section */
 		2E3645F71FA13D2100A8FC5B /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+		2E895E362001DC9E008C52C5 /* Upload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Upload.swift; sourceTree = "<group>"; };
 		2EA5583D1F8B722200D2E9EE /* Survey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Survey.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2EA558401F8B722200D2E9EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2EA558451F8B722200D2E9EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -108,7 +110,6 @@
 				2EE5C9081F934D050097F328 /* model */,
 				2EE5C8F91F934D050097F328 /* util */,
 				2EE5C9031F934D050097F328 /* viewController */,
-				2EE5C9001F934D050097F328 /* webview */,
 				2EA558401F8B722200D2E9EE /* AppDelegate.swift */,
 				2EA558441F8B722200D2E9EE /* Main.storyboard */,
 				2EA5584A1F8B722200D2E9EE /* Assets.xcassets */,
@@ -127,17 +128,11 @@
 				2EAA84A51F9C2388000B60C7 /* StringHex.swift */,
 				2EAA84A31F9C19B0000B60C7 /* MCrypt.swift */,
 				2EE5C8FF1F934D050097F328 /* Uri.swift */,
-			);
-			path = util;
-			sourceTree = "<group>";
-		};
-		2EE5C9001F934D050097F328 /* webview */ = {
-			isa = PBXGroup;
-			children = (
 				2EE5C9011F934D050097F328 /* Constants.swift */,
 				2EE5C9021F934D050097F328 /* Strings.swift */,
+				2E895E362001DC9E008C52C5 /* Upload.swift */,
 			);
-			path = webview;
+			path = util;
 			sourceTree = "<group>";
 		};
 		2EE5C9031F934D050097F328 /* viewController */ = {
@@ -208,6 +203,11 @@
 					2EA5583C1F8B722200D2E9EE = {
 						CreatedOnToolsVersion = 9.0;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -324,6 +324,7 @@
 				2EE5C9161F934D050097F328 /* recordViewController.swift in Sources */,
 				2EAA84A41F9C19B0000B60C7 /* MCrypt.swift in Sources */,
 				2EE5C90C1F934D050097F328 /* DateUtil.swift in Sources */,
+				2E895E372001DC9E008C52C5 /* Upload.swift in Sources */,
 				2E3645F81FA13D2100A8FC5B /* NotificationManager.swift in Sources */,
 				2EA558491F8B722200D2E9EE /* Survey.xcdatamodeld in Sources */,
 				2EE5C9121F934D050097F328 /* Constants.swift in Sources */,

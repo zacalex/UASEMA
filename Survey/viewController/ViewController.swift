@@ -13,8 +13,11 @@ import SystemConfiguration
 import Foundation
 import UserNotifications
 import WebKit
+import CoreLocation
+import CoreMotion
+import Alamofire
 
-class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificationCenterDelegate{
+class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificationCenterDelegate, CLLocationManagerDelegate{
 
     var netTimer: Timer!
     var myWebView : WKWebView!
@@ -24,12 +27,47 @@ class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificatio
     private var defaults = UserDefaults.standard
     private var isInSurvey = false;
     
+    var locationManager = CLLocationManager()
+    var motionManager = CMMotionManager()
+    var Hz = 50.0
+    //location service
+    func setupCoreLocation()  {
+        print("setupCoreLocation")
+        switch CLLocationManager.authorizationStatus() {
+            case .notDetermined:
+                print("in setup ","not determined")
+                locationManager.requestAlwaysAuthorization()
+                break
+            case .authorizedAlways:
+                print("in setup ","authorized")
+                enableLocationServices()
+            default:
+                break
+        }
+    }
+    func enableLocationServices()  {
+        if CLLocationManager.locationServicesEnabled(){
+            
+            locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+//            locationManager.requestWhenInUseAuthorization()
+            
+            locationManager.startMonitoringSignificantLocationChanges()
+            locationManager.distanceFilter = 2
+            locationManager.allowsBackgroundLocationUpdates = true
+            locationManager.startUpdatingLocation()
+        }
+    }
+    func disableLocationServices(){
+        locationManager.stopUpdatingLocation()
+    }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        locationManager.delegate = self
+        locationManager.requestAlwaysAuthorization()
         UNUserNotificationCenter.current().delegate = self
-        
+//        locationManager.delegate = self
         //json test
         JsonParser.updateSettingSample()
         
@@ -51,7 +89,9 @@ class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificatio
         let options = UIBarButtonItem.init(image: UIImage.init(named: "options"), style: .plain, target: self, action: #selector(self.showOptions))
         self.navigationItem.setRightBarButton(options, animated: true)
         
-        
+        setupCoreLocation()
+        setFile()
+        setAcce()
     }
     func setWKWebview(){
         let userContentController = WKUserContentController()
@@ -213,9 +253,10 @@ class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificatio
         
     }
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        print("here comes did finish")
+        print("here comes did finish ")
         webView.evaluateJavaScript("document.documentElement.outerHTML.toString()", completionHandler: {(result: Any?, error: Error?) in
             if error == nil {
+                print("html content", result)
                 let regex = "rtid\\~.*\\~\\d{4}-\\d{2}-\\d{2}"
                 let resultString = String(describing: result)
                 //                print(resultString)
@@ -393,7 +434,7 @@ class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificatio
             
         }
         
-    override func viewDidAppear(_ animated: Bool) {
+        override func viewDidAppear(_ animated: Bool) {
 //            SwiftSpinner.show("Loading from viewDidAppear...")
             setSpinner(message: "Loading from viewDidAppear...")
             route(settings: settings, now: Date())
@@ -444,6 +485,117 @@ class ViewController: UIViewController , WKNavigationDelegate, UNUserNotificatio
             }
             return ""
         }
+    
+    
+    //location
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .authorizedAlways:
+            print("location authorized")
+            enableLocationServices()
+        case .denied, .restricted:
+            print("not authorized")
+        default:
+            break
+        }
+    }
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let location = locations.last!
+        print("Date: ",DateUtil.stringifyAll(calendar: Date())," Coord: \(location.coordinate)")
+    }
+    
+    
+    //Accelerometer
+    var count = 0.0
+    var tempSum = 0.0
+    var fileURL : URL! = nil
+    var basicUrl = "http://10.120.64.78:8888/TEST.php"
+    var fileName = "rtid_replacement_acce_data"
+    let DocumentDirUrl = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    let calendar = Calendar.current
+    var buffer = ""
+    var uploaded = false
+    var appended = false
+    func setFile(){
+        fileURL = DocumentDirUrl.appendingPathComponent(fileName).appendingPathExtension("txt")
+        print("file path : \(fileURL.path)")
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: fileURL.path){
+            print("File exist")
+        } else {
+            print("File not exist")
+            let writeString = "ritd replacement\n"
+            do{
+                try writeString.write(to:fileURL,atomically: true,encoding: String.Encoding.utf8)
+            } catch let error as NSError {
+                print("fail to write to url")
+                print(error)
+            }
+            
+        }
+    }
+    func setAcce() {
+        motionManager.accelerometerUpdateInterval = 1.0/Hz
+        motionManager.startAccelerometerUpdates(to : OperationQueue.current!){
+            (data, error) in
+            if let myData = data {
+                //                print(myData)
+                var svm = myData.acceleration.x * myData.acceleration.x +
+                    myData.acceleration.y * myData.acceleration.y +
+                    myData.acceleration.z * myData.acceleration.z
+                
+                svm = sqrt(svm) - 1
+                self.tempSum = self.tempSum + svm
+                self.count = self.count + 1.0
+                if(self.count > self.Hz){
+                    self.count = 0;
+                    self.buffer += "\n" + DateUtil.stringifyAllAlt(calendar: Date()) + " \(svm)"
+//                    print(self.buffer)
+                    svm = 0.0;
+                    
+                }
+                let threshold = self.calendar.component(.second, from: Date())
+                
+//                print(threshold)
+                if(threshold == 0 && !self.uploaded && self.count == 0){
+                    print("upload and reset file")
+                    let localBase = "http://10.120.64.78:8888/ema/index.php"
+                    Upload.upload(fileUrl: self.fileURL, desUrl: localBase)
+                    self.resetFile()
+                    self.uploaded = true
+                } else if (threshold == 30 && !self.appended && self.count == 0) {
+                    print("append file")
+                    self.appendfile(dataString: self.buffer)
+                    self.buffer = ""
+                    self.appended = true
+                } else {
+                    self.appended = false
+                    self.uploaded = false
+                }
+            }
+        }
+    }
+    func appendfile(dataString : String){
+        
+        //        print("data to be append ", dataString)
+        do{
+            let fileHandle = try FileHandle(forWritingTo: fileURL)
+            fileHandle.seekToEndOfFile()
+            fileHandle.write(dataString.data(using: .utf8)!)
+            fileHandle.closeFile()
+        } catch {
+            print("Error writing to file \(error)")
+        }
+    }
+    func resetFile(){
+        fileURL = DocumentDirUrl.appendingPathComponent(fileName).appendingPathExtension("txt")
+        do {
+            try settings.getRtid()?.write(to: fileURL, atomically: true, encoding: .utf8)
+        } catch let error {
+            print(error)
+        }
+    }
+    
         
 }
 
