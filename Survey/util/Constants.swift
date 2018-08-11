@@ -19,6 +19,8 @@ class Constants: NSObject {
     public static let surveysKey = "UASEmasurveysKey"
     public static let setAtTimeKey = "UASEmasetAtTimeKey"
     public static let NotificationsTimeKey = "NotificationsTimeKey"
+    public static let AccelrecordingKey = "AccelrecordingKey"
+    public static let VideorecordingKey = "VideorecordingKey"
     
     public static let CookieNameKey = "CookieNameKey"
     public static let CookieValueKey = "CookieValueKey"
@@ -47,5 +49,7 @@ class Constants: NSObject {
     public static var TIME_TO_TAKE_SURVEY = isDemo ? TIME_TO_TAKE_SURVEY_DEV : TIME_TO_TAKE_SURVEY_PRO;
     public static var TIME_TO_REMINDER = isDemo ? TIME_TO_REMINDER_DEV : TIME_TO_REMINDER_PRO;
     public static var baseURL = "https://uas.usc.edu/survey/uas/ema/daily/index.php";
+    
+    public static var videoMaximumDuration = 240
    
 }

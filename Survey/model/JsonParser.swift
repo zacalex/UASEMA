@@ -14,10 +14,52 @@ class JsonParser : NSObject {
                          "reminder":120,
                          "windowopen":560,
                          "website":"https://uas.usc.edu/survey/uas/ema/daily.ema.php"]
+    
     static var reminder = 0
     static var windowopen = 0
     
-    static func updateSetting(json : JSON, settings : Settings)  {
+    static func updateSetting(webpage : String, settings : Settings)  {
+        let dataFromString = String(describing: webpage).data(using: String.Encoding.utf8, allowLossyConversion: false)
+        let json = JSON(dataFromString!)
+        
+
+        if let rtid = json["rtid"].string{
+            settings.updateAndSave(rtid: rtid, beginTime: Date(), endTime: Calendar.current.date(byAdding: .day, value: 7, to: Date())!, setAtTime: Date())
+            
+        } else{
+            print("parseJson","no rtid")
+        }
+        
+        if let reminder = json[reminder].int {
+            Constants.TIME_TO_REMINDER = reminder / 60
+            print("parseJson","set reminder", Constants.TIME_TO_REMINDER)
+        } else {
+            print("parseJson","no reminder")
+        }
+        
+        if let windowopen = json["windowopen"].int {
+            // Do something you want
+            Constants.TIME_TO_TAKE_SURVEY = windowopen / 60
+        } else {
+            print("parseJson","no windowopen")
+        }
+        if let website = json["website"].string {
+            // Do something you want
+            Constants.baseURL = website
+        } else {
+            print("parseJson","no website")
+        }
+        if let pings = json["pings"].array {
+            if(pings.count > 0){
+                let surs = Settings.buildSurveyFromJSON(json: json)
+                settings.setSurs(surs: surs)
+            } else {
+                print("parseJson","empty pings info")
+            }
+        } else {
+            print("parseJson","no pings")
+        }
+        
         
     }
     static func updateSettingSample()  {
@@ -41,4 +83,6 @@ class JsonParser : NSObject {
         print("is constants changed ?", Constants.TIME_TO_TAKE_SURVEY, " ", Constants.TIME_TO_REMINDER)
         print("here is the setting from local json", setting.toString())
     }
+    
+    
 }

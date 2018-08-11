@@ -28,6 +28,7 @@ class UrlBuilder: NSObject {
     PHONE_OPTOUT = "phone.optout",              //  Opt out
     PHONE_START = "phone.start",                //  Start: Used if no user
     PHONE_LOGOUT = "logout",
+    PHONE_NOALARMS = "noalarmsset",
     SENDMAIL = "sendmail",
     SETTINGS_CHANGE = "settings.change",        //  Used for block_between, passed, (master)
     TEST = "test",
@@ -42,7 +43,7 @@ class UrlBuilder: NSObject {
     private static func buildParams(page : String, settings : Settings, now : Date) -> String{
         return "&rtid=" + (settings.getRtid() == nil ? "" : Uri.encode(content: settings.getRtid()!)) +
     "&language=" + "en" +
-    "&device=" + "iOS" +
+    "&device=" + "andr" +
     "&email=" +
             "&selecteddate=" + DateUtil.stringifyDate(calendar: settings.getbeginTime()) +    //  Not encoded?
             "&date=" + Uri.encode(content: DateUtil.stringifyAll(calendar: now)) +
@@ -54,6 +55,7 @@ class UrlBuilder: NSObject {
     private static let baseURL = "https://uas.usc.edu/survey/uas/ema/daily/index.php";
     
     public static func build(page : String,  settings : Settings, now : Date, includeParams : Bool) -> String{
+//        let set = Settings.getSettingFromDefault()
         let response = baseURL + "?ema=1&p=" + page + (includeParams ? buildParams(page: page, settings: settings, now: now) : "");
 //    LogUtil.e("TT", "UrlBuilder => build() == " + response);
         print(response)
